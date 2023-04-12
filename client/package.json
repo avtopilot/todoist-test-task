@@ -8,12 +8,18 @@
   "private": true,
   "scripts": {
     "start": "webpack serve --port 3000",
-    "build": "NODE_ENV=production webpack"
+    "build": "NODE_ENV=production webpack",
+    "lint": "eslint 'src/**/*.ts'"
   },
   "devDependencies": {
     "@types/react": "^18.0.34",
+    "@types/react-bootstrap": "^0.32.32",
     "@types/react-dom": "^18.0.11",
+    "@types/react-router-dom": "^5.3.3",
+    "@typescript-eslint/eslint-plugin": "^5.58.0",
+    "@typescript-eslint/parser": "^5.58.0",
     "css-loader": "^6.7.3",
+    "eslint": "^8.38.0",
     "html-webpack-plugin": "^5.5.0",
     "mini-css-extract-plugin": "^2.7.5",
     "ts-loader": "^9.4.2",
@@ -23,7 +29,10 @@
     "webpack-dev-server": "^4.13.2"
   },
   "dependencies": {
+    "bootstrap": "^5.2.3",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-bootstrap": "^2.7.3",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.10.0"
   }
 }
