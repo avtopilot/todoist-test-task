@@ -1,0 +1,8 @@
+body {
+  background-color: #e4e5e6 !important;
+}
+
+.app-body {
+  padding: 24px 30px;
+  position: relative;
+}
