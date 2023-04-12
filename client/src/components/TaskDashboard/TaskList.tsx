@@ -1,7 +1,7 @@
 import React from "react";
-import { Table } from "react-bootstrap";
+import { Button, Table } from "react-bootstrap";
 
-type ColumnType = { dataField: string; title: string };
+type ColumnType = { dataField?: string; title: string };
 const columns: ColumnType[] = [
   {
     dataField: "name",
@@ -36,6 +36,7 @@ const TaskList = () => {
           {columns.map((column, idx) => (
             <th key={idx}>{column.title}</th>
           ))}
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -45,6 +46,10 @@ const TaskList = () => {
             {columns.map((column) => (
               <td>{row[column.dataField as keyof DataType]}</td>
             ))}
+            <td>
+              <Button>Edit</Button>
+              <Button>Delete</Button>
+            </td>
           </tr>
         ))}
       </tbody>

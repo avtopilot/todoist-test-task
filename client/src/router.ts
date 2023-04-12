@@ -1,11 +1,13 @@
 import React from "react";
 
-const TaskList = React.lazy(() => import("./components/TaskList/TaskList"));
+const TaskDashboard = React.lazy(
+  () => import("./components/TaskDashboard/TaskDashboard")
+);
 
 const routes = [
   {
     path: "/",
-    element: TaskList,
+    element: TaskDashboard,
   },
 ];
 
