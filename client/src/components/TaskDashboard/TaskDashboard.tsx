@@ -1,10 +1,10 @@
 import React from "react";
-import { Button } from "react-bootstrap";
+import TaskCreation from "./TaskCreation";
 import TaskList from "./TaskList";
 
 const TaskDashboard = () => (
   <div>
-    <Button className="float-end">Create Task</Button>
+    <TaskCreation />
     <TaskList />
   </div>
 );

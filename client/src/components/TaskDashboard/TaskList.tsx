@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Table } from "react-bootstrap";
+import { TaskDetails } from "../../models";
 
 type ColumnType = { dataField?: string; title: string };
 const columns: ColumnType[] = [
@@ -17,14 +18,9 @@ const columns: ColumnType[] = [
   },
 ];
 
-type DataType = {
-  name: string;
-  priority: string;
-  status: string;
-};
-const data: DataType[] = [
-  { name: "todo 1", priority: "high", status: "to do" },
-  { name: "todo 2", priority: "critical", status: "in progress" },
+const data: TaskDetails[] = [
+  { name: "todo 1", priority: 5, status: "to do" },
+  { name: "todo 2", priority: 10, status: "in progress" },
 ];
 
 const TaskList = () => {
@@ -41,10 +37,10 @@ const TaskList = () => {
       </thead>
       <tbody>
         {data.map((row, idx) => (
-          <tr>
+          <tr key={idx}>
             <td>{idx}</td>
-            {columns.map((column) => (
-              <td>{row[column.dataField as keyof DataType]}</td>
+            {columns.map((column, idy) => (
+              <td key={idy}>{row[column.dataField as keyof TaskDetails]}</td>
             ))}
             <td>
               <Button>Edit</Button>
