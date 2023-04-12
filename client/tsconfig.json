@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    // Process & infer types from .js files.
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    // Import non-ES modules as default imports.
+    "esModuleInterop": true,
+    "jsx": "react",
+    "module": "esnext",
+    // Search under node_modules for non-relative imports.
+    "moduleResolution": "node",
+    "strict": true,
+    "sourceMap": true,
+    // Target latest version of ECMAScript.
+    "target": "esnext",
+    "typeRoots": ["./src/types", "./node_modules/@types"]
+  },
+  "include": ["./src/**/*"]
+}
