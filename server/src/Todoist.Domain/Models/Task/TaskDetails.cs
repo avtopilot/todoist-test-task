@@ -4,7 +4,7 @@ public record TaskDetails
 {
     public string Name { get; init; } = null!;
 
-    public int Priority { get; init; }
+    public byte Priority { get; init; }
 
     public TaskStatus Status { get; init; }
     

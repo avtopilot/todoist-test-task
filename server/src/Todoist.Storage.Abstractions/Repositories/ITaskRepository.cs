@@ -4,8 +4,9 @@ namespace Todoist.Storage.Abstractions.Repositories;
 
 public interface ITaskRepository
 {
-    Task<IReadOnlyCollection<TaskDetails>> GetTasks(CancellationToken cancellationToken);
+    Task<IEnumerable<TaskDetails>> GetTasks(CancellationToken cancellationToken);
+    Task<TaskDetails?> GetTask(string taskName, CancellationToken cancellationToken);
     Task<bool> AddTask(TaskDetails taskDetails, CancellationToken cancellationToken);
     Task<bool> UpdateTask(TaskDetails taskDetails, CancellationToken cancellationToken);
-    Task<bool> DeleteTask(TaskDetails taskDetails, CancellationToken cancellationToken);
+    Task<bool> DeleteTask(string taskName, CancellationToken cancellationToken);
 }

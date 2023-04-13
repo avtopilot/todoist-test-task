@@ -14,4 +14,13 @@ internal static class TaskEntityMapper
             Status = (TaskStatus)Enum.ToObject(typeof(TaskStatus), entity.Status),
             UpdatedAt = entity.UpdatedAt
         };
+    
+    public static TaskDetailsEntity FromDomain(TaskDetails domain) =>
+        new TaskDetailsEntity
+        {
+            Name = domain.Name,
+            Priority = domain.Priority,
+            Status = (byte)domain.Status,
+            UpdatedAt = domain.UpdatedAt
+        };
 }

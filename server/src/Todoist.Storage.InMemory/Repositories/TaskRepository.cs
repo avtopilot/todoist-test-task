@@ -7,32 +7,67 @@ namespace Todoist.Storage.InMemory.Repositories;
 
 public class TaskRepository : ITaskRepository
 {
-    private ICollection<TaskDetailsEntity> _taskEntities;
+    private readonly IDictionary<string, TaskDetailsEntity> _taskEntities;
 
     public TaskRepository()
     {
-        _taskEntities = new List<TaskDetailsEntity>();
+        _taskEntities = new Dictionary<string, TaskDetailsEntity>();
     }
     
-    public async Task<IReadOnlyCollection<TaskDetails>> GetTasks(CancellationToken cancellationToken)
+    public async Task<IEnumerable<TaskDetails>> GetTasks(CancellationToken cancellationToken)
     {
-        var result = _taskEntities.Select(TaskEntityMapper.ToDomain);
+        IEnumerable<TaskDetails> result = _taskEntities.Values.Select(TaskEntityMapper.ToDomain);
 
-        return (IReadOnlyCollection<TaskDetails>)await Task.FromResult(result);
+        return await Task.FromResult(result);
     }
 
-    public Task<bool> AddTask(TaskDetails taskDetails, CancellationToken cancellationToken)
+    public async Task<TaskDetails?> GetTask(string taskName, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        if (_taskEntities.TryGetValue(taskName, out var task))
+        {
+            await Task.FromResult(TaskEntityMapper.ToDomain(task));
+        }
+
+        return null;
     }
 
-    public Task<bool> UpdateTask(TaskDetails taskDetails, CancellationToken cancellationToken)
+    public async Task<bool> AddTask(TaskDetails taskDetails, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var entity = TaskEntityMapper.FromDomain(taskDetails);
+
+        return await Task.FromResult(_taskEntities.TryAdd(entity.Name, entity));
     }
 
-    public Task<bool> DeleteTask(TaskDetails taskDetails, CancellationToken cancellationToken)
+    // TODO: return result pattern instead?
+    public async Task<bool> UpdateTask(TaskDetails taskDetails, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var entity = TaskEntityMapper.FromDomain(taskDetails);
+
+        var existingEntity = await GetTask(taskDetails.Name, cancellationToken);
+
+        var result = false;
+
+        if (existingEntity is not null)
+        {
+            _taskEntities[taskDetails.Name] = entity;
+            result = true;
+        }
+
+        return await Task.FromResult(result);
+    }
+
+    public async Task<bool> DeleteTask(string taskName, CancellationToken cancellationToken)
+    {
+        var existingEntity = await GetTask(taskName, cancellationToken);
+
+        var result = false;
+
+        if (existingEntity is not null)
+        {
+            _taskEntities.Remove(taskName);
+            result = true;
+        }
+
+        return await Task.FromResult(result);
     }
 }
