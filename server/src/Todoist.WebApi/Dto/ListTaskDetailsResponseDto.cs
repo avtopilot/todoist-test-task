@@ -6,5 +6,5 @@ public class ListTaskDetailsResponseDto
 
     public int Priority { get; init; }
 
-    public string Status { get; init; }
+    public string Status { get; init; } = null!;
 }

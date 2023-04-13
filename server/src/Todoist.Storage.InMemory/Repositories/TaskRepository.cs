@@ -1,13 +1,24 @@
 using Todoist.Domain.Models.Task;
 using Todoist.Storage.Abstractions.Repositories;
+using Todoist.Storage.InMemory.Entities;
+using Todoist.Storage.InMemory.Mappers;
 
 namespace Todoist.Storage.InMemory.Repositories;
 
 public class TaskRepository : ITaskRepository
 {
-    public Task<IReadOnlyCollection<TaskDetails>> GetTasks(CancellationToken cancellationToken)
+    private ICollection<TaskDetailsEntity> _taskEntities;
+
+    public TaskRepository()
     {
-        throw new NotImplementedException();
+        _taskEntities = new List<TaskDetailsEntity>();
+    }
+    
+    public async Task<IReadOnlyCollection<TaskDetails>> GetTasks(CancellationToken cancellationToken)
+    {
+        var result = _taskEntities.Select(TaskEntityMapper.ToDomain);
+
+        return (IReadOnlyCollection<TaskDetails>)await Task.FromResult(result);
     }
 
     public Task<bool> AddTask(TaskDetails taskDetails, CancellationToken cancellationToken)
