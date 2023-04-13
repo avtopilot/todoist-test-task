@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Todoist.Storage.InMemory;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,7 +6,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddInMemoryStorage();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(opt =>
+    {
+        opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddApiVersioning();

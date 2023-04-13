@@ -19,7 +19,7 @@ public class TaskControllerShould : TestBase
     {
         // arrange
         var request = new RestRequest("v1/task/test")
-            .AddJsonBody(new { status = 555, priority = 1});
+            .AddJsonBody(new { status = "Do Not Exist", priority = 1});
 
         // act
         var response = await RestClient.ExecutePostAsync(request);
@@ -33,7 +33,7 @@ public class TaskControllerShould : TestBase
     {
         // arrange
         var request = new RestRequest("v1/task/test")
-            .AddJsonBody(new { status = 0, priority = 555});
+            .AddJsonBody(new { status = "NotStarted", priority = priority});
 
         // act
         var response = await RestClient.ExecutePostAsync(request);
@@ -50,7 +50,7 @@ public class TaskControllerShould : TestBase
     {
         // arrange
         var request = new RestRequest($"v1/task/{taskName}")
-            .AddJsonBody(new { status = 0, priority = 0});
+            .AddJsonBody(new { status = "NotStarted", priority = 0});
 
         // act
         var response = await RestClient.ExecutePostAsync(request);
@@ -72,7 +72,7 @@ public class TaskControllerShould : TestBase
         // arrange
         const string TaskName = "test";
         var request = new RestRequest($"v1/task/{TaskName}")
-            .AddJsonBody(new { status = 0, priority = 0});
+            .AddJsonBody(new { status = "NotStarted", priority = 0});
 
         // act
         // first addition of a task
@@ -112,7 +112,7 @@ public class TaskControllerShould : TestBase
         // add one task
         const string TaskName = "test";
         var requestToAdd = new RestRequest($"v1/task/{TaskName}")
-            .AddJsonBody(new { status = 0, priority = 0});
+            .AddJsonBody(new { status = "NotStarted", priority = 0});
         await RestClient.ExecutePostAsync(requestToAdd);
 
         // build request to list API endpoint
@@ -140,11 +140,11 @@ public class TaskControllerShould : TestBase
     {
         // arrange
         var expected = JObject.FromObject(
-            new { name = taskName, priority = 0, status = 0 });
+            new { name = taskName, priority = 0, status = "NotStarted" });
 
         // add one task
         var requestToAdd = new RestRequest($"v1/task/{taskName}")
-            .AddJsonBody(new { status = 0, priority = 0});
+            .AddJsonBody(new { status = "NotStarted", priority = 0});
         await RestClient.ExecutePostAsync(requestToAdd);
 
         // build request to get task API endpoint
@@ -158,6 +158,51 @@ public class TaskControllerShould : TestBase
         Assert.NotNull(response.Content);
 
         var task = JsonConvert.DeserializeObject<JObject>(response.Content);
+        Assert.Equal(expected, task);
+
+        // remove added task
+        var requestToRemove = new RestRequest($"v1/task/{taskName}");
+        var responseForRemoval = await RestClient.DeleteAsync(requestToRemove);
+
+        // validate successfully removed
+        responseForRemoval.StatusCode.Should().Be(HttpStatusCode.NoContent);
+    }
+
+    [Theory]
+    [InlineData("test", "InProgress", 3)]
+    [InlineData("test space", "Completed", 99)]
+    public async Task ReturnSuccessOnUpdatingTask(string taskName, string status, byte priority)
+    {
+        // arrange
+        var expected = JObject.FromObject(
+            new { name = taskName, priority = priority, status = status });
+
+        // add one task
+        var requestToAdd = new RestRequest($"v1/task/{taskName}")
+            .AddJsonBody(new { status = "NotStarted", priority = 0});
+        await RestClient.ExecutePostAsync(requestToAdd);
+
+        // build request to update task API endpoint
+        var request = new RestRequest($"v1/task/{taskName}")
+            .AddJsonBody(new { status = status, priority = priority});
+
+        // act
+        var response = await RestClient.ExecutePutAsync(request);
+
+        // assert
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+
+        // check the task data
+        var requestToGet = new RestRequest($"v1/task/{taskName}");
+
+        // act
+        var responseOnGet = await RestClient.ExecuteGetAsync(requestToGet);
+
+        // assert
+        responseOnGet.StatusCode.Should().Be(HttpStatusCode.OK);
+        Assert.NotNull(responseOnGet.Content);
+
+        var task = JsonConvert.DeserializeObject<JObject>(responseOnGet.Content);
         Assert.Equal(expected, task);
 
         // remove added task
