@@ -19,7 +19,11 @@ const initErrors: ErrorsType = {
   name: null,
 };
 
-const TaskCreation = () => {
+type TaskCreationProps = {
+  updateList: (newTask: TaskDetails) => void;
+};
+
+const TaskCreation = (props: TaskCreationProps) => {
   const [showDialog, setShowDialog] = useState(false);
   const [taskDetails, setTaskDetails] = useState<TaskDetails>(initialState);
   const [errors, setErrors] = useState<ErrorsType>(initErrors);
@@ -61,6 +65,7 @@ const TaskCreation = () => {
       }
     } else {
       setShowDialog(false);
+      props.updateList(taskDetails);
     }
   };
 
