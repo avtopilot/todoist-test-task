@@ -36,7 +36,7 @@ public class TaskControllerShould : TestBase
     {
         // arrange
         var request = new RestRequest("v1/task/test")
-            .AddJsonBody(new { status = "NotStarted", priority = priority});
+            .AddJsonBody(new { status = "NotStarted", priority});
 
         // act
         var response = await RestClient.ExecutePostAsync(request);
@@ -178,7 +178,7 @@ public class TaskControllerShould : TestBase
     {
         // arrange
         var expected = JObject.FromObject(
-            new { name = taskName, priority = priority, status = status });
+            new { name = taskName, priority, status });
 
         // add one task
         var requestToAdd = new RestRequest($"v1/task/{taskName}")
@@ -187,7 +187,7 @@ public class TaskControllerShould : TestBase
 
         // build request to update task API endpoint
         var request = new RestRequest($"v1/task/{taskName}")
-            .AddJsonBody(new { status = status, priority = priority});
+            .AddJsonBody(new { status, priority});
 
         // act
         var response = await RestClient.ExecutePutAsync(request);
