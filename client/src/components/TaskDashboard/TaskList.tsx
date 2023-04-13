@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Table } from "react-bootstrap";
 import { TaskDetails } from "../../models";
+import { loadTaskList } from "../../clients/TodoistClient";
+import { useNotifier } from "../Notifier";
 
 type ColumnType = { dataField?: string; title: string };
 const columns: ColumnType[] = [
@@ -18,12 +20,28 @@ const columns: ColumnType[] = [
   },
 ];
 
-const data: TaskDetails[] = [
-  { name: "todo 1", priority: 5, status: "to do" },
-  { name: "todo 2", priority: 10, status: "in progress" },
-];
-
 const TaskList = () => {
+  const [data, setData] = useState<TaskDetails[]>([]);
+  const notifier = useNotifier();
+
+  useEffect(() => {
+    (async () => {
+      notifier.notifyBusy(true);
+
+      const tasks = await loadTaskList();
+
+      notifier.notifyBusy(false);
+
+      if (!tasks.ok) {
+        const error = tasks.val;
+        notifier.showError(error.message);
+        return;
+      }
+
+      setData(tasks.val);
+    })();
+  }, [setData]);
+
   return (
     <Table striped bordered hover size="sm">
       <thead>

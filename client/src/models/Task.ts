@@ -4,4 +4,4 @@ export type TaskDetails = {
   status: string;
 };
 
-export const SUPPORTED_STATUSES = ["Not started", "In progress", "Completed"];
+export const SUPPORTED_STATUSES = ["NotStarted", "InProgress", "Completed"];

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { TaskDetails } from "../../models";
 import { SUPPORTED_STATUSES } from "../../models/Task";
+import { useNotifier } from "../Notifier";
+import { createTask } from "../../clients/TodoistClient";
 
 type ErrorsType = {
   name: string | null;
@@ -21,6 +23,7 @@ const TaskCreation = () => {
   const [showDialog, setShowDialog] = useState(false);
   const [taskDetails, setTaskDetails] = useState<TaskDetails>(initialState);
   const [errors, setErrors] = useState<ErrorsType>(initErrors);
+  const notifier = useNotifier();
 
   const validateForm = () =>
     setErrors({
@@ -39,18 +42,26 @@ const TaskCreation = () => {
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) =>
     setTaskDetails({ ...taskDetails, status: event.target.value });
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     validateForm();
 
     // todo: validate
-    // todo: call API
-    // if (true) {
-    // setErrors({ ...errors, name: "Task with this name already exists" });
-    // } else {
-    //   setIsValidForm(true);
 
-    //   setShowDialog(false);
-    // }
+    notifier.notifyBusy(true);
+
+    const result = await createTask(taskDetails);
+
+    notifier.notifyBusy(false);
+
+    if (!result.ok) {
+      if (result.val.statusCode == 409) {
+        setErrors({ ...errors, name: "Task with this name already exists" });
+      } else {
+        notifier.showError(result.val.message);
+      }
+    } else {
+      setShowDialog(false);
+    }
   };
 
   return (
