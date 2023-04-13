@@ -4,6 +4,13 @@ using Todoist.Storage.InMemory;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddCors(
+    options =>
+        options.AddDefaultPolicy(
+            corsPolicyBuilder => corsPolicyBuilder.WithOrigins("http://localhost:3000")
+                .AllowAnyMethod()
+                .AllowAnyHeader()));
+
 builder.Services.AddInMemoryStorage();
 
 builder.Services.AddControllers()
@@ -25,6 +32,7 @@ builder.Services.AddVersionedApiExplorer(
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+app.UseCors();
 
 if (app.Environment.IsDevelopment())
 {
