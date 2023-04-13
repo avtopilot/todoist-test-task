@@ -25,7 +25,7 @@ public class TaskRepository : ITaskRepository
     {
         if (_taskEntities.TryGetValue(taskName, out var task))
         {
-            await Task.FromResult(TaskEntityMapper.ToDomain(task));
+            return await Task.FromResult(TaskEntityMapper.ToDomain(task));
         }
 
         return null;
