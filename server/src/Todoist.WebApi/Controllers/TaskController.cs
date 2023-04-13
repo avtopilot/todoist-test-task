@@ -9,7 +9,7 @@ namespace Todoist.WebApi.Controllers;
 [ApiVersion("1")]
 [Route("v{version:apiVersion}")]
 [Produces(MediaTypeNames.Application.Json)]
-public class TaskController : Controller
+public class TaskController : ControllerBase
 {
     private readonly ITaskRepository _taskRepository;
     
