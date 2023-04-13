@@ -79,7 +79,7 @@ public class TaskController : ControllerBase
 
         var result = await _taskRepository.AddTask(taskDomain, HttpContext.RequestAborted);
 
-        return result ? Ok() : Conflict();
+        return result ? CreatedAtAction(nameof(AddTask), null) : Conflict();
     }
     
     [HttpPut("task/{taskName:required}")]
