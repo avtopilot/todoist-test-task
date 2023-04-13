@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todoist.Storage.InMemory.Un
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todoist.WebApi.UnitTests", "tests\Todoist.WebApi.UnitTests\Todoist.WebApi.UnitTests.csproj", "{CBB93C1C-5580-44A4-A0FC-CCD83E954514}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todoist.WebApi.IntegrationTests", "tests\Todoist.WebApi.IntegrationTests\Todoist.WebApi.IntegrationTests.csproj", "{0A9148CC-7424-454D-9769-84E24BF77B04}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,6 +30,7 @@ Global
 		{2782B12E-832B-4F7E-B634-FD45480E73E7} = {52C4E265-4275-4F7A-8E6E-63768700E373}
 		{A3772DD6-0BE1-4BD7-86FE-FF840A4A9142} = {AB7E769C-1582-43C6-98E0-E1CDBCA1E1E9}
 		{CBB93C1C-5580-44A4-A0FC-CCD83E954514} = {AB7E769C-1582-43C6-98E0-E1CDBCA1E1E9}
+		{0A9148CC-7424-454D-9769-84E24BF77B04} = {AB7E769C-1582-43C6-98E0-E1CDBCA1E1E9}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{B86DC055-078E-4F57-A814-F99DA3B1F1C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -54,5 +57,9 @@ Global
 		{CBB93C1C-5580-44A4-A0FC-CCD83E954514}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBB93C1C-5580-44A4-A0FC-CCD83E954514}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CBB93C1C-5580-44A4-A0FC-CCD83E954514}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A9148CC-7424-454D-9769-84E24BF77B04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A9148CC-7424-454D-9769-84E24BF77B04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A9148CC-7424-454D-9769-84E24BF77B04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A9148CC-7424-454D-9769-84E24BF77B04}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
