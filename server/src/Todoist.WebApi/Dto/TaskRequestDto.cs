@@ -6,7 +6,7 @@ namespace Todoist.WebApi.Dto;
 public class TaskRequestDto
 {
     [Required]
-    [Range(0, 100)]
+    [Range(0, 100, ErrorMessage = @"The field {0} must be in the range of {1} - {2}.")]
     public byte Priority { get; init; }
 
     [Required]

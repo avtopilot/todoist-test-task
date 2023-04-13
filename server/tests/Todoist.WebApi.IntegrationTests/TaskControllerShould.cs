@@ -28,8 +28,11 @@ public class TaskControllerShould : TestBase
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
-    [Fact]
-    public async Task ReturnErrorOnCreatingTaskWithInvalidPriority()
+    [Theory]
+    [InlineData(555)]
+    [InlineData(101)]
+    [InlineData(-2)]
+    public async Task ReturnErrorOnCreatingTaskWithInvalidPriority(int priority)
     {
         // arrange
         var request = new RestRequest("v1/task/test")
