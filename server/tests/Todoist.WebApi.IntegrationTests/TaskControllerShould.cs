@@ -215,4 +215,19 @@ public class TaskControllerShould : TestBase
         // validate successfully removed
         responseForRemoval.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
+
+    [Fact]
+    public async Task ReturnErrorOnUpdatingUnExistingTask()
+    {
+        // arrange
+        const string TaskName = "Do Not Exist";
+        var requestToAdd = new RestRequest($"v1/task/{TaskName}")
+            .AddJsonBody(new { status = "NotStarted", priority = 0});
+
+        // act
+        var response = await RestClient.ExecutePutAsync(requestToAdd);
+
+        // assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
 }
