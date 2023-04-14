@@ -136,7 +136,7 @@ const TaskDashboard = () => {
         <tbody>
           {data.map((row, idx) => (
             <tr key={idx}>
-              <td>{idx}</td>
+              <td>{idx + 1}</td>
               {columns.map((column, idy) => (
                 <td key={idy}>{row[column.dataField as keyof TaskDetails]}</td>
               ))}
