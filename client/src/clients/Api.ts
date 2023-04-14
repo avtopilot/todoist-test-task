@@ -109,6 +109,21 @@ class Api {
       return Err(this.toApiError(error, this.overrideApiError));
     }
   }
+
+  async delete<TRequest, TResponse>(
+    endpoint: string,
+    customHeaders?: Record<string, string>
+  ): Promise<Result<TResponse, ApiError>> {
+    try {
+      const result = await this.apiInstance.delete<TRequest, any>(
+        endpoint,
+        this.createRequestConfig(customHeaders)
+      );
+      return Ok(result.data);
+    } catch (error: any) {
+      return Err(this.toApiError(error, this.overrideApiError));
+    }
+  }
 }
 
 export interface ApiError extends Error {
