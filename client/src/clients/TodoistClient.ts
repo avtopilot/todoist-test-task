@@ -37,6 +37,11 @@ export const createTask = async (
 ): Promise<Result<null, ApiError>> =>
   await api.post<TaskDetails, null>(`v1/task/${taskDetails.name}`, taskDetails);
 
+export const updateTask = async (
+  taskDetails: TaskDetails
+): Promise<Result<null, ApiError>> =>
+  await api.put<TaskDetails, null>(`v1/task/${taskDetails.name}`, taskDetails);
+
 export const deleteTask = async (
   taskName: string
 ): Promise<Result<null, ApiError>> =>

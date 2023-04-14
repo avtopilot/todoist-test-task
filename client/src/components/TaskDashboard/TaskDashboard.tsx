@@ -3,7 +3,7 @@ import { Button, Table } from "react-bootstrap";
 import { TaskDetails } from "../../models";
 import { deleteTask, loadTaskList } from "../../clients/TodoistClient";
 import { useNotifier } from "../Notifier";
-import TaskCreation from "./TaskCreation";
+import TaskCreationModal from "./TaskCreation";
 import WarningModalDialog from "../ModalDialogs/WarningModalDialog";
 
 type ColumnType = { dataField?: string; title: string; className: string };
@@ -28,7 +28,8 @@ const columns: ColumnType[] = [
 const TaskDashboard = () => {
   const [data, setData] = useState<TaskDetails[]>([]);
   const [showWarning, setShowWarning] = useState(false);
-  const [taskToDelete, setTaskToDelete] = useState<string>("");
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [currentTask, setCurrentTask] = useState<TaskDetails | null>(null);
   const notifier = useNotifier();
 
   useEffect(() => {
@@ -49,23 +50,47 @@ const TaskDashboard = () => {
     })();
   }, [setData]);
 
-  const updateTasks = (newTask: TaskDetails) => setData([...data, newTask]);
+  const handleCreatedTask = (newTask: TaskDetails) => {
+    setData([...data, newTask]);
+    setShowCreateModal(false);
+  };
 
-  const handleDeleteButtonClick = (taskName: string) => {
+  const handleUpdatedTask = (existingTask: TaskDetails) => {
+    setData(
+      data.map((task) =>
+        task.name === existingTask.name ? existingTask : task
+      )
+    );
+    setShowCreateModal(false);
+    setCurrentTask(null);
+  };
+
+  const handleCloseCreateWindow = () => {
+    setShowCreateModal(false);
+    setCurrentTask(null);
+  };
+
+  const handleDeleteButtonClick = (task: TaskDetails) => {
     setShowWarning(true);
-    setTaskToDelete(taskName);
+    setCurrentTask(task);
+  };
+
+  const handleEditButtonClick = (task: TaskDetails) => {
+    setCurrentTask(task);
+    setShowCreateModal(true);
   };
 
   const handleDelete = async (confirmed: boolean) => {
     setShowWarning(false);
+    setCurrentTask(null);
 
-    if (!confirmed) {
+    if (!confirmed || !currentTask) {
       return;
     }
 
     notifier.notifyBusy(true);
 
-    const result = await deleteTask(taskToDelete);
+    const result = await deleteTask(currentTask.name);
 
     notifier.notifyBusy(false);
 
@@ -74,14 +99,26 @@ const TaskDashboard = () => {
     } else {
       // remove deleted item from the task list
       setData((current) =>
-        current.filter((task) => task.name !== taskToDelete)
+        current.filter((task) => task.name !== currentTask.name)
       );
     }
   };
 
   return (
     <div>
-      <TaskCreation updateList={updateTasks} />
+      <Button className="float-end" onClick={() => setShowCreateModal(true)}>
+        Create Task
+      </Button>
+
+      {showCreateModal && (
+        <TaskCreationModal
+          show={showCreateModal}
+          onCreated={handleCreatedTask}
+          onClose={handleCloseCreateWindow}
+          currentTask={currentTask}
+          onUpdated={handleUpdatedTask}
+        />
+      )}
 
       <Table striped bordered hover size="sm">
         <thead>
@@ -103,8 +140,8 @@ const TaskDashboard = () => {
                 <td key={idy}>{row[column.dataField as keyof TaskDetails]}</td>
               ))}
               <td>
-                <Button>Edit</Button>
-                <Button onClick={() => handleDeleteButtonClick(row.name)}>
+                <Button onClick={() => handleEditButtonClick(row)}>Edit</Button>
+                <Button onClick={() => handleDeleteButtonClick(row)}>
                   Delete
                 </Button>
               </td>
@@ -116,7 +153,7 @@ const TaskDashboard = () => {
         <WarningModalDialog
           isOpen={showWarning}
           title="Delete task"
-          content={`Do you really want to delete "${taskToDelete}" task?`}
+          content={`Do you really want to delete "${currentTask?.name}" task?`}
           confirmButtonTitle={"Delete"}
           onCloseCallback={handleDelete}
         />
