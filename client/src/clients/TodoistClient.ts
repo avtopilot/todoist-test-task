@@ -35,14 +35,22 @@ export const loadTaskList = async (): Promise<
 export const createTask = async (
   taskDetails: TaskDetails
 ): Promise<Result<null, ApiError>> =>
-  await api.post<TaskDetails, null>(`v1/task/${taskDetails.name}`, taskDetails);
+  await api.post<TaskDetails, null>(
+    `v1/task/${encodeURIComponent(taskDetails.name)}`,
+    taskDetails
+  );
 
 export const updateTask = async (
   taskDetails: TaskDetails
 ): Promise<Result<null, ApiError>> =>
-  await api.put<TaskDetails, null>(`v1/task/${taskDetails.name}`, taskDetails);
+  await api.put<TaskDetails, null>(
+    `v1/task/${encodeURIComponent(taskDetails.name)}`,
+    taskDetails
+  );
 
 export const deleteTask = async (
   taskName: string
 ): Promise<Result<null, ApiError>> =>
-  await api.delete<TaskDetails, null>(`v1/task/${taskName}`);
+  await api.delete<TaskDetails, null>(
+    `v1/task/${encodeURIComponent(taskName)}`
+  );
