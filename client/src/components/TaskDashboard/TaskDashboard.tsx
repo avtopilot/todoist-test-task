@@ -6,19 +6,22 @@ import { useNotifier } from "../Notifier";
 import TaskCreation from "./TaskCreation";
 import WarningModalDialog from "../ModalDialogs/WarningModalDialog";
 
-type ColumnType = { dataField?: string; title: string };
+type ColumnType = { dataField?: string; title: string; className: string };
 const columns: ColumnType[] = [
   {
     dataField: "name",
     title: "Name",
+    className: "col-md-4",
   },
   {
     dataField: "priority",
     title: "Priority",
+    className: "col-md-1",
   },
   {
     dataField: "status",
     title: "Status",
+    className: "col-md-2",
   },
 ];
 
@@ -83,11 +86,13 @@ const TaskDashboard = () => {
       <Table striped bordered hover size="sm">
         <thead>
           <tr>
-            <th>#</th>
+            <th className="col-md-1">#</th>
             {columns.map((column, idx) => (
-              <th key={idx}>{column.title}</th>
+              <th key={idx} className={column.className}>
+                {column.title}
+              </th>
             ))}
-            <th>Actions</th>
+            <th className="col-md-2">Actions</th>
           </tr>
         </thead>
         <tbody>
