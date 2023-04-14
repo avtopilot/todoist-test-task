@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { TaskDetails } from "../../models";
 import { SUPPORTED_STATUSES } from "../../models/Task";
 import { useNotifier } from "../Notifier";
 import { createTask } from "../../clients/TodoistClient";
+import { inRange } from "../../helpers/numberHelper";
 
 type ErrorsType = {
   name: string | null;
+  priority: string | null;
 };
 
 const initialState: TaskDetails = {
@@ -17,6 +19,7 @@ const initialState: TaskDetails = {
 
 const initErrors: ErrorsType = {
   name: null,
+  priority: null,
 };
 
 type TaskCreationProps = {
@@ -29,10 +32,15 @@ const TaskCreation = (props: TaskCreationProps) => {
   const [errors, setErrors] = useState<ErrorsType>(initErrors);
   const notifier = useNotifier();
 
+  useEffect(() => validateForm(), [taskDetails]);
+
   const validateForm = () =>
     setErrors({
       ...errors,
       name: !taskDetails.name ? "Name is mandatory" : null,
+      priority: !inRange(taskDetails.priority, 0, 100)
+        ? "Priority should be in range of 0 - 100"
+        : null,
     });
 
   const handleShow = () => setShowDialog(true);
@@ -47,9 +55,10 @@ const TaskCreation = (props: TaskCreationProps) => {
     setTaskDetails({ ...taskDetails, status: event.target.value });
 
   const handleSubmit = async () => {
-    validateForm();
-
-    // todo: validate
+    //do not send creation API request if there are any incorrectly filled fields
+    if (!Object.values(errors).every((value) => !value)) {
+      return;
+    }
 
     notifier.notifyBusy(true);
 
@@ -99,9 +108,15 @@ const TaskCreation = (props: TaskCreationProps) => {
               <Form.Control
                 id="taskPriority"
                 type="number"
+                min={0}
+                max={100}
+                isInvalid={!!errors.priority}
                 onChange={handleInputChange("priority")}
                 defaultValue={taskDetails.priority}
               ></Form.Control>
+              <Form.Control.Feedback type="invalid">
+                {errors.priority}
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group>
