@@ -5,6 +5,7 @@ import { deleteTask, loadTaskList } from "../../clients/TodoistClient";
 import { useNotifier } from "../Notifier";
 import TaskCreationModal from "./TaskCreation";
 import WarningModalDialog from "../ModalDialogs/WarningModalDialog";
+import { Pencil, Trash } from "react-bootstrap-icons";
 
 type ColumnType = { dataField?: string; title: string; className: string };
 const columns: ColumnType[] = [
@@ -140,9 +141,17 @@ const TaskDashboard = () => {
                 <td key={idy}>{row[column.dataField as keyof TaskDetails]}</td>
               ))}
               <td>
-                <Button onClick={() => handleEditButtonClick(row)}>Edit</Button>
-                <Button onClick={() => handleDeleteButtonClick(row)}>
-                  Delete
+                <Button
+                  variant="secondary"
+                  onClick={() => handleEditButtonClick(row)}
+                >
+                  <Pencil />
+                </Button>{" "}
+                <Button
+                  variant="secondary"
+                  onClick={() => handleDeleteButtonClick(row)}
+                >
+                  <Trash />
                 </Button>
               </td>
             </tr>
