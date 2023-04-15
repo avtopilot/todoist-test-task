@@ -75,7 +75,7 @@ public class TaskController : ControllerBase
             return Conflict("Task with this name already exists");
         }
 
-        var taskDomain = TaskDtoMapper.ToDomain(taskName, taskDto);
+        var taskDomain = TaskDtoMapper.ToDomain(taskName, taskDto) with {UpdatedAt = DateTime.Now};
 
         var result = await _taskRepository.AddTask(taskDomain, HttpContext.RequestAborted);
 
@@ -98,7 +98,7 @@ public class TaskController : ControllerBase
             return NotFound();
         }
 
-        var taskDomain = TaskDtoMapper.ToDomain(taskName, taskDto);
+        var taskDomain = TaskDtoMapper.ToDomain(taskName, taskDto) with {UpdatedAt = DateTime.Now};
 
         var result = await _taskRepository.UpdateTask(taskDomain, HttpContext.RequestAborted);
 

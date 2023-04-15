@@ -9,7 +9,6 @@ internal static class TaskDtoMapper
     {
         Name = taskName,
         Priority = dto.Priority,
-        Status = dto.Status,
-        UpdatedAt = DateTime.UtcNow
+        Status = dto.Status
     };
 }

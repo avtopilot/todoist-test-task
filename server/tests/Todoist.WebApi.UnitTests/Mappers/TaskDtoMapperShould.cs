@@ -31,6 +31,6 @@ public class TaskDtoMapperShould
 
         // assert
         // date is created at the mapping time
-        Assert.Equal(expectedDomain with {UpdatedAt = domain.UpdatedAt}, domain);
+        Assert.Equal(expectedDomain, domain);
     }
 }
