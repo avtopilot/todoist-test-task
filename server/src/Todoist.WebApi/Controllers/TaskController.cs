@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Todoist.Storage.Abstractions.Repositories;
 using Todoist.WebApi.Dto;
 using Todoist.WebApi.Mappers;
+using TaskStatus = Todoist.Domain.Models.Task.TaskStatus;
 
 namespace Todoist.WebApi.Controllers;
 
@@ -59,7 +60,6 @@ public class TaskController : ControllerBase
     }
 
     [HttpPost("task/{taskName:required}")]
-    // [DecodeParam(ParamName = "taskName")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -83,7 +83,6 @@ public class TaskController : ControllerBase
     }
     
     [HttpPut("task/{taskName:required}")]
-    // [DecodeParam(ParamName = "taskName")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -107,7 +106,6 @@ public class TaskController : ControllerBase
     }
 
     [HttpDelete("task/{taskName:required}")]
-    // [DecodeParam(ParamName = "taskName")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -118,6 +116,11 @@ public class TaskController : ControllerBase
         if (existingTask is null)
         {
             return NotFound();
+        }
+
+        if (existingTask.Status != TaskStatus.Completed)
+        {
+            return BadRequest("Unsupported task for this operation");
         }
 
         var result = await _taskRepository.DeleteTask(taskName, HttpContext.RequestAborted);

@@ -46,9 +46,9 @@ public class TaskControllerShould : TestBase
     }
 
     [Theory]
-    [InlineData("test")]
-    [InlineData("test space")]
-    [InlineData("test@ #5")]
+    [InlineData("test-post")]
+    [InlineData("test post")]
+    [InlineData("test@ post#5")]
     public async Task ReturnSuccessOnCreatingValidTask(string taskName)
     {
         // arrange
@@ -61,19 +61,15 @@ public class TaskControllerShould : TestBase
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 
-        // remove the record
-        var requestToRemove = new RestRequest($"v1/task/{taskName}");
-        var responseForRemoval = await RestClient.DeleteAsync(requestToRemove);
-
-        // validate successfully removed
-        responseForRemoval.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        // clean-up
+        await RemoveTask(taskName);
     }
 
     [Fact]
     public async Task ReturnErrorOnCreatingDuplicatedTask()
     {
         // arrange
-        const string TaskName = "test";
+        const string TaskName = "test-post";
         var request = new RestRequest($"v1/task/{TaskName}")
             .AddJsonBody(new { status = "NotStarted", priority = 0});
 
@@ -86,12 +82,8 @@ public class TaskControllerShould : TestBase
         var responseDuplicate = await RestClient.ExecutePostAsync(request);
         responseDuplicate.StatusCode.Should().Be(HttpStatusCode.Conflict);
 
-        // remove the record
-        var requestToRemove = new RestRequest($"v1/task/{TaskName}");
-        var responseForRemoval = await RestClient.DeleteAsync(requestToRemove);
-
-        // validate successfully removed
-        responseForRemoval.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        // clean-up
+        await RemoveTask(TaskName);
     }
 
     [Fact]
@@ -102,10 +94,35 @@ public class TaskControllerShould : TestBase
         var request = new RestRequest($"v1/task/{TaskName}");
 
         // act
-        var response = await RestClient.DeleteAsync(request);
+        var response = await RestClient.ExecuteAsync(request, Method.Delete);
 
         // arrange
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Theory]
+    [InlineData("NotStarted")]
+    [InlineData("InProgress")]
+    public async Task ReturnErrorOnRemovingNotCompletedTask(string status)
+    {
+        // arrange
+        const string TaskName = "test-delete";
+
+        // first step is to create a task
+        var request = new RestRequest($"v1/task/{TaskName}")
+            .AddJsonBody(new { status, priority = 0});
+        var responseToAdd = await RestClient.ExecutePostAsync(request);
+        responseToAdd.StatusCode.Should().Be(HttpStatusCode.Created);
+
+        // act
+        var requestToDelete = new RestRequest($"v1/task/{TaskName}");
+        var responseForRemoval = await RestClient.ExecuteAsync(requestToDelete, Method.Delete);
+
+        // arrange
+        responseForRemoval.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+        // clean-up
+        await RemoveTask(TaskName);
     }
 
     [Fact]
@@ -113,7 +130,7 @@ public class TaskControllerShould : TestBase
     {
         // arrange
         // add one task
-        const string TaskName = "test";
+        const string TaskName = "test-list";
         var requestToAdd = new RestRequest($"v1/task/{TaskName}")
             .AddJsonBody(new { status = "NotStarted", priority = 0});
         await RestClient.ExecutePostAsync(requestToAdd);
@@ -128,17 +145,13 @@ public class TaskControllerShould : TestBase
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         Assert.NotNull(response.Content);
 
-        // remove added task
-        var requestToRemove = new RestRequest($"v1/task/{TaskName}");
-        var responseForRemoval = await RestClient.DeleteAsync(requestToRemove);
-
-        // validate successfully removed
-        responseForRemoval.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        // clean-up
+        await RemoveTask(TaskName);
     }
 
     [Theory]
-    [InlineData("test")]
-    [InlineData("test space")]
+    [InlineData("test-get")]
+    [InlineData("test get")]
     public async Task ReturnTaskOnRequest(string taskName)
     {
         // arrange
@@ -163,17 +176,13 @@ public class TaskControllerShould : TestBase
         var task = JsonConvert.DeserializeObject<JObject>(response.Content);
         Assert.Equal(expected, task);
 
-        // remove added task
-        var requestToRemove = new RestRequest($"v1/task/{taskName}");
-        var responseForRemoval = await RestClient.DeleteAsync(requestToRemove);
-
-        // validate successfully removed
-        responseForRemoval.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        // clean-up
+        await RemoveTask(taskName);
     }
 
     [Theory]
-    [InlineData("test", "InProgress", 3)]
-    [InlineData("test space", "Completed", 99)]
+    [InlineData("test-update", "InProgress", 3)]
+    [InlineData("test update", "Completed", 99)]
     public async Task ReturnSuccessOnUpdatingTask(string taskName, string status, byte priority)
     {
         // arrange
@@ -208,12 +217,8 @@ public class TaskControllerShould : TestBase
         var task = JsonConvert.DeserializeObject<JObject>(responseOnGet.Content);
         Assert.Equal(expected, task);
 
-        // remove added task
-        var requestToRemove = new RestRequest($"v1/task/{taskName}");
-        var responseForRemoval = await RestClient.DeleteAsync(requestToRemove);
-
-        // validate successfully removed
-        responseForRemoval.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        // clean-up
+        await RemoveTask(taskName);
     }
 
     [Fact]
@@ -229,5 +234,19 @@ public class TaskControllerShould : TestBase
 
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    private async Task RemoveTask(string taskName)
+    {
+        // change the status of the task so we bypass Validation rules for deletion
+        var requestToUpdate = new RestRequest($"v1/task/{taskName}")
+            .AddJsonBody(new { status="Completed", priority = 0});
+        var response = await RestClient.ExecutePutAsync(requestToUpdate);
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+
+        // remove the task
+        var requestToRemove = new RestRequest($"v1/task/{taskName}");
+        response = await RestClient.ExecuteAsync(requestToRemove, Method.Delete);
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
 }
