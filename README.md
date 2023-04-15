@@ -37,7 +37,7 @@ The client-side application is located under the _client_ folder. To run it, ple
 1. install npm packages by running `yarn` command
 2. start the application `yarn start`
 
-The application will start on the _3000_ port (http://localhost:3000). If you would like to run it on a different port, please change it in `start` command inside _package.json_ file.
+The application by default will start on the _3000_ port (http://localhost:3000).
 
 The client application is integrated with the backend API. The URL to the API is configured in _public -> env.js_ file and currently set to http://localhost:5000.
 
@@ -55,7 +55,9 @@ The application is configured to run on _5000_ port, this can be changed by amme
 
 ### Assumptions:
 
-- it was assumed the Task name is unique and cannot be changed
+- Task name is unique and cannot be changed
+- Task name is case sensitive (_task_ and _Task_ considered as 2 different tasks)
+- 100 priorities is enough (priorities are in the range of 0 to 100)
 - there are no Unit Tests for the repository and controller since the logic is covered with Integration Tests
 
 ### TODO:
