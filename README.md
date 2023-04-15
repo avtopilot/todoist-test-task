@@ -45,12 +45,11 @@ The client application is integrated with the backend API. The URL to the API is
 
 The backend-side application is located under the _server_ folder. It can be run from any IDE supporting .Net 7 or a console by running:
 
-- `dotnet build`
-- `dotnet run src/Todoist.WebApi`
+- `dotnet run --project src/Todoist.WebApi`
 
 The backend application contains both UnitTests and IntegrationTests, which can be run from IDE as well or console by running:
 
-- `dotnet test --no-build *.sln`
+- `dotnet test *.sln`
 
 The application is configured to run on _5000_ port, this can be changed by ammending _launchSettings.json_ file. Please if you change the port, don't forget to amend it on the client-side application as well, instruction can be found [here](#client-side).
 
