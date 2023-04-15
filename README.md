@@ -61,4 +61,5 @@ The application is configured to run on _5000_ port, this can be changed by amme
 
 ### TODO:
 
-- fix styles for the Alert window (should be a popover just in the right part of the screen)
+- introduce Result Pattern on BE
+- move controller logic to Action Handlers

@@ -1,26 +1,25 @@
-import React, { useEffect, useState } from "react";
-import Alert from "react-bootstrap/Alert";
+import React, { useState } from "react";
+import { Toast, ToastContainer } from "react-bootstrap";
 
 const ErrorAlert = (props: { message: string; show: boolean }) => {
   const [show, setShow] = useState(props.show);
 
-  useEffect(() => {
-    window.setTimeout(() => {
-      setShow(false);
-    }, 5000);
-  });
-
-  return show ? (
-    <Alert
-      variant="danger"
-      role="alert"
-      onClose={() => setShow(false)}
-      dismissible
-    >
-      <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
-      <p>{props.message}</p>
-    </Alert>
-  ) : null;
+  return (
+    <ToastContainer position="top-end" className="p-3">
+      <Toast
+        bg="danger"
+        onClose={() => setShow(false)}
+        show={show}
+        delay={5000}
+        autohide
+      >
+        <Toast.Header closeButton>
+          <strong className="me-auto">Oh snap! You got an error!</strong>
+        </Toast.Header>
+        <Toast.Body>{props.message}</Toast.Body>
+      </Toast>
+    </ToastContainer>
+  );
 };
 
 export default ErrorAlert;
