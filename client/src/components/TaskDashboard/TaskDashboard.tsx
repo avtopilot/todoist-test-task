@@ -6,6 +6,7 @@ import { useNotifier } from "../Notifier";
 import TaskCreationModal from "./TaskCreation";
 import WarningModalDialog from "../ModalDialogs/WarningModalDialog";
 import { Pencil, Trash } from "react-bootstrap-icons";
+import { TaskStatus } from "../../models/Task";
 
 type ColumnType = { dataField?: string; title: string; className: string };
 const columns: ColumnType[] = [
@@ -51,6 +52,9 @@ const TaskDashboard = () => {
     })();
   }, [setData]);
 
+  const isDisabled = (task: TaskDetails) =>
+    task.status !== TaskStatus.Completed;
+
   const handleCreatedTask = (newTask: TaskDetails) => {
     setData([...data, newTask]);
     setShowCreateModal(false);
@@ -85,7 +89,7 @@ const TaskDashboard = () => {
     setShowWarning(false);
     setCurrentTask(null);
 
-    if (!confirmed || !currentTask) {
+    if (!confirmed || !currentTask || isDisabled(currentTask)) {
       return;
     }
 
@@ -150,6 +154,7 @@ const TaskDashboard = () => {
                 <Button
                   variant="secondary"
                   onClick={() => handleDeleteButtonClick(row)}
+                  disabled={isDisabled(row)}
                 >
                   <Trash />
                 </Button>

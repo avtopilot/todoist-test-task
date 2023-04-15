@@ -1,7 +1,11 @@
 export type TaskDetails = {
   name: string;
   priority: number;
-  status: string;
+  status: TaskStatus;
 };
 
-export const SUPPORTED_STATUSES = ["NotStarted", "InProgress", "Completed"];
+export enum TaskStatus {
+  NotStarted = "NotStarted",
+  InProgress = "InProgress",
+  Completed = "Completed",
+}

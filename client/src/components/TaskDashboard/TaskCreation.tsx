@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { TaskDetails } from "../../models";
-import { SUPPORTED_STATUSES } from "../../models/Task";
+import { TaskStatus } from "../../models/Task";
 import { useNotifier } from "../Notifier";
 import { createTask, updateTask } from "../../clients/TodoistClient";
 import { inRange } from "../../helpers/numberHelper";
@@ -14,7 +14,7 @@ type ErrorsType = {
 const initialState: TaskDetails = {
   name: "",
   priority: 0,
-  status: SUPPORTED_STATUSES[0],
+  status: TaskStatus.InProgress,
 };
 
 const initErrors: ErrorsType = {
@@ -60,7 +60,10 @@ const TaskCreationModal = (props: TaskCreationProps) => {
       setTaskDetails({ ...taskDetails, [property]: event.target.value });
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) =>
-    setTaskDetails({ ...taskDetails, status: event.target.value });
+    setTaskDetails({
+      ...taskDetails,
+      status: TaskStatus[event.target.value as keyof typeof TaskStatus],
+    });
 
   const handleSubmit = async () => {
     //do not send creation API request if there are any incorrectly filled fields
@@ -148,7 +151,7 @@ const TaskCreationModal = (props: TaskCreationProps) => {
               value={taskDetails.status}
               onChange={handleSelectChange}
             >
-              {SUPPORTED_STATUSES.map((status, idx) => (
+              {Object.values(TaskStatus).map((status, idx) => (
                 <option key={idx}>{status}</option>
               ))}
             </Form.Select>
